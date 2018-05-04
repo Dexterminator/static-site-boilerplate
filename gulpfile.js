@@ -40,7 +40,10 @@ gulp.task('js', function () {
 gulp.task('watch', function () {
   browserSync({
     server: {
-      baseDir: buildDest
+      baseDir: buildDest,
+      serveStaticOptions: {
+        extensions: ['html']
+      }
     }
   });
 
