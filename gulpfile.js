@@ -2,9 +2,14 @@ var gulp = require('gulp');
 var pug = require('gulp-pug');
 var stylus = require('gulp-stylus');
 var minifyCSS = require('gulp-csso');
-var browserSync = require('browser-sync');
 var sourceMaps = require('gulp-sourcemaps');
-var concat = require('gulp-concat');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+var uglify = require('gulp-uglify');
+var log = require('gulplog');
+var browserSync = require('browser-sync');
+var rename = require('gulp-rename');
 var reload = browserSync.reload;
 
 var views = 'views/**/*.pug';
@@ -30,11 +35,20 @@ gulp.task('css', function () {
 });
 
 gulp.task('js', function () {
-  return gulp.src(javaScripts)
-    .pipe(sourceMaps.init())
-    .pipe(concat('bundle.min.js'))
-    .pipe(sourceMaps.write())
-    .pipe(gulp.dest(buildDest + '/js'))
+  var b = browserify({
+    entries: 'js/main.js',
+    debug: true
+  });
+
+  return b.bundle()
+    .pipe(source('js/main.js'))
+    .pipe(buffer())
+    .pipe(sourceMaps.init({loadMaps: true}))
+    .pipe(uglify())
+    .pipe(rename('bundle.min.js'))
+    .on('error', log.error)
+    .pipe(sourceMaps.write('./'))
+    .pipe(gulp.dest(buildDest + '/js'));
 });
 
 gulp.task('watch', function () {
