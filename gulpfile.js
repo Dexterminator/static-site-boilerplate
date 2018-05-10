@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var pug = require('gulp-pug');
 var stylus = require('gulp-stylus');
 var minifyCSS = require('gulp-csso');
+var nib = require('nib');
 var browserSync = require('browser-sync');
 var sourceMaps = require('gulp-sourcemaps');
 var concat = require('gulp-concat');
@@ -24,7 +25,7 @@ gulp.task('html', function () {
 
 gulp.task('css', function () {
   return gulp.src(styles)
-    .pipe(stylus())
+    .pipe(stylus({use: [nib()]}))
     .pipe(minifyCSS())
     .pipe(gulp.dest(buildDest + '/css'))
 });
